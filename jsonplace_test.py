@@ -1,125 +1,82 @@
 import requests
 from faker import Faker
 from jsonschema import validate
-from schemas import Resp, GET_POSTS, GET_COMMENTS, GET_ALBUMS, GET_PHOTOS, GET_TODOS
+from schemas import GET_POSTS, GET_COMMENTS, GET_ALBUMS, GET_PHOTOS, GET_TODOS
+from Resp import Resp
+
+url = "https://jsonplaceholder.typicode.com"
 
 
 def test_get_posts():
-    r = requests.get("https://jsonplaceholder.typicode.com/posts")
+    r = requests.get(url + "/posts")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    assert resp_len == 100
-    for i in range(resp_len):
-        response_body = r.json()[i]
-        validate(response_body, GET_POSTS)
+    assert len(r.json()) == 100
+    for resp in r.json():
+        validate(resp, GET_POSTS)
 
 
 def test_get_comments():
-    r = requests.get("https://jsonplaceholder.typicode.com/comments")
+    r = requests.get(url + "/comments")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    assert resp_len == 500
-    for i in range(resp_len):
-        response_body = r.json()[i]
-        validate(response_body, GET_COMMENTS)
+    assert len(r.json()) == 500
+    for resp in r.json():
+        validate(resp, GET_COMMENTS)
 
 
 def test_get_albums():
-    r = requests.get("https://jsonplaceholder.typicode.com/albums")
+    r = requests.get(url + "/albums")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    assert resp_len == 100
-    for i in range(resp_len):
-        response_body = r.json()[i]
-        validate(response_body, GET_ALBUMS)
+    assert len(r.json()) == 100
+    for resp in r.json():
+        validate(resp, GET_ALBUMS)
 
 
 def test_get_photos():
-    r = requests.get("https://jsonplaceholder.typicode.com/photos")
+    r = requests.get(url + "/photos")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    assert resp_len == 5000
-    for i in range(resp_len):
-        response_body = r.json()[i]
-        validate(response_body, GET_PHOTOS)
+    assert len(r.json()) == 5000
+    for resp in r.json():
+        validate(resp, GET_PHOTOS)
 
 
 def test_get_todos():
-    r = requests.get("https://jsonplaceholder.typicode.com/todos")
+    r = requests.get(url + "/todos")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    assert resp_len == 200
-    for i in range(resp_len):
-        response_body = r.json()[i]
-        validate(response_body, GET_TODOS)
-
-
-def test_get_users():
-    r = requests.get("https://jsonplaceholder.typicode.com/users")
-    response = Resp(r)
-    response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    assert resp_len == 10
-    for i in range(resp_len):
-        assert isinstance(response_body[i]["id"], int)
-        assert isinstance(response_body[i]["name"], str)
-        assert isinstance(response_body[i]["email"], str)
-        assert isinstance(response_body[i]["address"]["street"], str)
-        assert isinstance(response_body[i]["address"]["suite"], str)
-        assert isinstance(response_body[i]["address"]["city"], str)
-        assert isinstance(response_body[i]["address"]["zipcode"], str)
-        assert isinstance(response_body[i]["address"]["geo"]["lat"], str)
-        assert isinstance(response_body[i]["address"]["geo"]["lng"], str)
-        assert isinstance(response_body[i]["phone"], str)
-        assert isinstance(response_body[i]["website"], str)
-        assert isinstance(response_body[i]["company"]["name"], str)
-        assert isinstance(response_body[i]["company"]["catchPhrase"], str)
-        assert isinstance(response_body[i]["company"]["bs"], str)
+    assert len(r.json()) == 200
+    for resp in r.json():
+        validate(resp, GET_TODOS)
 
 
 def test_get_posts_1():
-    r = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+    r = requests.get(url + "/posts/1")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    validate(response_body, GET_POSTS)
+    validate(r.json(), GET_POSTS)
 
 
 def test_posts_1_comments():
-    r = requests.get("https://jsonplaceholder.typicode.com/posts/1/comments")
+    r = requests.get(url + "/posts/1/comments")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    for i in range(resp_len):
-        response_body = r.json()[i]
-        validate(response_body, GET_COMMENTS)
+    for resp in r.json():
+        validate(resp, GET_COMMENTS)
 
 
 def test_posts_comments_postId_1():
-    r = requests.get("https://jsonplaceholder.typicode.com/comments?postId=1")
+    r = requests.get(url + "/comments?postId=1")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    for i in range(resp_len):
-        response_body = r.json()[i]
-        validate(response_body, GET_COMMENTS)
+    for resp in r.json():
+        validate(resp, GET_COMMENTS)
 
 
 def test_post_posts():
-    r = requests.post("https://jsonplaceholder.typicode.com/posts", json={"userId": Faker().random_number(),
+    r = requests.post(url + "/posts", json={"userId": Faker().random_number(),
                                                                                  "title": Faker().word(),
                                                                                  "body": Faker().sentences()})
     response = Resp(r)
@@ -127,7 +84,7 @@ def test_post_posts():
 
 
 def test_put_posts_1():
-    r = requests.put("https://jsonplaceholder.typicode.com/posts/1", json={"userId": Faker().random_number(),
+    r = requests.put(url + "/posts/1", json={"userId": Faker().random_number(),
                                                                                   "title": Faker().word(),
                                                                                   "body": Faker().sentences()})
     response = Resp(r)
@@ -135,7 +92,7 @@ def test_put_posts_1():
 
 
 def test_patch_posts_1():
-    r = requests.patch("https://jsonplaceholder.typicode.com/posts/1", json={"userId": Faker().random_number(),
+    r = requests.patch(url + "/posts/1", json={"userId": Faker().random_number(),
                                                                                   "title": Faker().word(),
                                                                                   "body": Faker().sentences()})
     response = Resp(r)
@@ -143,50 +100,38 @@ def test_patch_posts_1():
 
 
 def test_delete_posts_1():
-    r = requests.delete("https://jsonplaceholder.typicode.com/posts/1")
+    r = requests.delete(url + "/posts/1")
     response = Resp(r)
     response.assert_status_code(200)
 
 
 def test_get_albums_1_photos():
-    r = requests.get("https://jsonplaceholder.typicode.com/albums/1/photos")
+    r = requests.get(url + "/albums/1/photos")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    for i in range(resp_len):
-        response_body = r.json()[i]
-        validate(response_body, GET_PHOTOS)
+    for resp in r.json():
+        validate(resp, GET_PHOTOS)
 
 
 def test_get_users_1_albums():
-    r = requests.get("https://jsonplaceholder.typicode.com/users/1/albums")
+    r = requests.get(url + "/users/1/albums")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    for i in range(resp_len):
-        response_body = r.json()[i]
-        validate(response_body, GET_ALBUMS)
+    for resp in r.json():
+        validate(resp, GET_ALBUMS)
 
 
 def test_get_users_1_todos():
-    r = requests.get("https://jsonplaceholder.typicode.com/users/1/todos")
+    r = requests.get(url + "/users/1/todos")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    for i in range(resp_len):
-        response_body = r.json()[i]
-        validate(response_body, GET_TODOS)
+    for resp in r.json():
+        validate(resp, GET_TODOS)
 
 
 def test_get_users_1_posts():
-    r = requests.get("https://jsonplaceholder.typicode.com/users/1/posts")
+    r = requests.get(url + "/users/1/posts")
     response = Resp(r)
     response.assert_status_code(200)
-    response_body = r.json()
-    resp_len = len(response_body)
-    for i in range(resp_len):
-        response_body = r.json()[i]
-        validate(response_body, GET_POSTS)
+    for resp in r.json():
+        validate(resp, GET_POSTS)
